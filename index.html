@@ -3,31 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Game - Circular Arena</title>
+    <title>2D Game - Drag-and-Drop Programming</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
         canvas {
             display: block;
-            margin: 0 auto;
-            background-color: #ccc;
-            border: 2px solid black;
+            margin: 20px auto;
+            background-color: #ddd;
+            border: 4px solid #333;
+            border-radius: 10px;
+        }
+
+        #controls {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        .blocks, .programming-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .block {
+            width: 100px;
+            padding: 10px;
+            background-color: #d9edf7;
+            border: 2px solid #31708f;
+            border-radius: 5px;
+            cursor: grab;
+            text-align: center;
+        }
+
+        .block.dragging {
+            opacity: 0.5;
+        }
+
+        .programming-area {
+            border: 2px dashed #333;
+            min-height: 100px;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border-radius: 5px;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .actions button:hover {
+            background-color: #ddd;
+        }
+
+        .run {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .reset {
+            background-color: #f44336;
+            color: white;
         }
     </style>
 </head>
 <body>
+    <div id="controls">
+        <h2>Drag-and-Drop Programming - Control Your Robots</h2>
+
+        <div>
+            <h3>Available Blocks</h3>
+            <div class="blocks">
+                <div class="block" draggable="true" data-command="up">Move Up</div>
+                <div class="block" draggable="true" data-command="down">Move Down</div>
+                <div class="block" draggable="true" data-command="left">Move Left</div>
+                <div class="block" draggable="true" data-command="right">Move Right</div>
+            </div>
+        </div>
+
+        <div>
+            <h3>Programming Area</h3>
+            <div id="programmingArea" class="programming-area"></div>
+        </div>
+
+        <div class="actions">
+            <button class="run" onclick="runCommands()">Run Commands</button>
+            <button class="reset" onclick="resetProgrammingArea()">Reset</button>
+        </div>
+    </div>
+
     <canvas id="gameCanvas" width="400" height="400"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Player objects
-        const player1 = { x: 140, y: 185, width: 30, height: 30, color: 'red', speed: 2, dx: 0, dy: 0 };
-        const player2 = { x: 230, y: 185, width: 30, height: 30, color: 'blue', speed: 2, dx: 0, dy: 0 };
+        const player1 = { x: 140, y: 185, width: 30, height: 30, color: 'red', speed: 10 };
 
-        // Key states
-        const keys = {};
-
-        // Circle properties
         const circle = {
             x: canvas.width / 2,
             y: canvas.height / 2,
@@ -35,69 +130,72 @@
             color: '#333'
         };
 
-        // Load the background image for the circle
-        const circleImage = new Image();
-        circleImage.src = "dojo.jpg"; // Replace with your image path
+        const programmingArea = document.getElementById('programmingArea');
 
-        window.addEventListener('keydown', (e) => keys[e.key] = true);
-        window.addEventListener('keyup', (e) => keys[e.key] = false);
+        // Drag-and-drop functionality
+        let draggedBlock = null;
 
-        function update() {
-            // Reset velocities
-            player1.dx = 0;
-            player1.dy = 0;
-            player2.dx = 0;
-            player2.dy = 0;
+        document.querySelectorAll('.block').forEach(block => {
+            block.addEventListener('dragstart', (e) => {
+                draggedBlock = e.target;
+                draggedBlock.classList.add('dragging');
+            });
 
-            // Player 1 controls (WASD)
-            if (keys['w']) player1.dy = -player1.speed;
-            if (keys['s']) player1.dy = player1.speed;
-            if (keys['a']) player1.dx = -player1.speed;
-            if (keys['d']) player1.dx = player1.speed;
+            block.addEventListener('dragend', () => {
+                draggedBlock.classList.remove('dragging');
+                draggedBlock = null;
+            });
+        });
 
-            // Player 2 controls (Arrow keys)
-            if (keys['ArrowUp']) player2.dy = -player2.speed;
-            if (keys['ArrowDown']) player2.dy = player2.speed;
-            if (keys['ArrowLeft']) player2.dx = -player2.speed;
-            if (keys['ArrowRight']) player2.dx = player2.speed;
+        programmingArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
 
-            // Update positions with collision handling
-            movePlayer(player1, player2);
-            movePlayer(player2, player1);
+        programmingArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedBlock) {
+                const clone = draggedBlock.cloneNode(true);
+                programmingArea.appendChild(clone);
+            }
+        });
 
-            // Check collision with circle
-            if (!isInsideCircle(player1)) declareWinner(2);
-            if (!isInsideCircle(player2)) declareWinner(1);
-
-            // Keep players within canvas bounds
-            player1.x = Math.max(0, Math.min(canvas.width - player1.width, player1.x));
-            player1.y = Math.max(0, Math.min(canvas.height - player1.height, player1.y));
-
-            player2.x = Math.max(0, Math.min(canvas.width - player2.width, player2.x));
-            player2.y = Math.max(0, Math.min(canvas.height - player2.height, player2.y));
+        // Reset programming area
+        function resetProgrammingArea() {
+            programmingArea.innerHTML = '';
         }
 
-        function movePlayer(player, otherPlayer) {
-            const nextX = player.x + player.dx;
-            const nextY = player.y + player.dy;
+        // Run commands
+        function runCommands() {
+            const commands = Array.from(programmingArea.children).map(block => block.dataset.command);
+            console.log('Running commands:', commands);
 
-            // Predict collision with the other player
-            if (
-                nextX < otherPlayer.x + otherPlayer.width &&
-                nextX + player.width > otherPlayer.x &&
-                nextY < otherPlayer.y + otherPlayer.height &&
-                nextY + player.height > otherPlayer.y
-            ) {
-                // Push the other player
-                if (player.dx > 0) otherPlayer.x += player.dx;
-                if (player.dx < 0) otherPlayer.x += player.dx;
-                if (player.dy > 0) otherPlayer.y += player.dy;
-                if (player.dy < 0) otherPlayer.y += player.dy;
-            } else {
-                // Move the player normally
-                player.x = nextX;
-                player.y = nextY;
+            executeCommands(commands, () => {
+                console.log('All commands executed');
+            });
+        }
+
+        // Execute commands
+        function executeCommands(commands, callback) {
+            let i = 0;
+
+            function executeNextCommand() {
+                if (i >= commands.length) {
+                    if (callback) callback();
+                    return;
+                }
+
+                const command = commands[i];
+                if (command === 'up') player1.y -= player1.speed;
+                if (command === 'down') player1.y += player1.speed;
+                if (command === 'left') player1.x -= player1.speed;
+                if (command === 'right') player1.x += player1.speed;
+
+                i++;
+                draw();
+                setTimeout(executeNextCommand, 500); // Delay between commands
             }
+
+            executeNextCommand();
         }
 
         function draw() {
@@ -109,58 +207,17 @@
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // Draw inner circle
-            ctx.save(); // Save the current context state
+            ctx.fillStyle = circle.color;
             ctx.beginPath();
             ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
-            ctx.clip(); // Clip the drawing area to the circle
+            ctx.fill();
 
-            // Draw the image inside the circle
-            ctx.drawImage(circleImage, circle.x - circle.radius, circle.y - circle.radius, circle.radius * 2, circle.radius * 2);
-
-            ctx.restore(); // Restore the context state
-
-            // Draw players
+            // Draw player
             ctx.fillStyle = player1.color;
             ctx.fillRect(player1.x, player1.y, player1.width, player1.height);
-
-            ctx.fillStyle = player2.color;
-            ctx.fillRect(player2.x, player2.y, player2.width, player2.height);
         }
 
-        function isInsideCircle(player) {
-            const dx = player.x + player.width / 2 - circle.x;
-            const dy = player.y + player.height / 2 - circle.y;
-            return Math.sqrt(dx * dx + dy * dy) <= circle.radius;
-        }
-
-        function declareWinner(winner) {
-            alert(`Player ${winner} wins!`);
-            resetGame();
-        }
-
-        function resetGame() {
-            player1.x = 150;
-            player1.y = 180;
-            player1.dx = 0;
-            player1.dy = 0;
-
-            player2.x = 230;
-            player2.y = 180;
-            player2.dx = 0;
-            player2.dy = 0;
-
-            location.reload(); // Recarrega a página
-        }
-
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        circleImage.onload = () => {
-            gameLoop(); // Start the game loop when the image is loaded
-        };
+        draw(); // Initial draw
     </script>
 </body>
 </html>
