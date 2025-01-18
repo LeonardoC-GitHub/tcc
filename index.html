@@ -4,91 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2D Game - Drag-and-Drop Programming</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        canvas {
-            display: block;
-            margin: 20px auto;
-            background-color: #ddd;
-            border: 4px solid #333;
-            border-radius: 10px;
-        }
-
-        #controls {
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 20px;
-            max-width: 800px;
-            margin: 20px auto;
-            text-align: left;
-        }
-
-        .blocks, .programming-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .block {
-            width: 100px;
-            padding: 10px;
-            background-color: #d9edf7;
-            border: 2px solid #31708f;
-            border-radius: 5px;
-            cursor: grab;
-            text-align: center;
-        }
-
-        .block.dragging {
-            opacity: 0.5;
-        }
-
-        .programming-area {
-            border: 2px dashed #333;
-            min-height: 100px;
-            padding: 10px;
-            background-color: #f7f7f7;
-            border-radius: 5px;
-        }
-
-        .actions {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .actions button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .actions button:hover {
-            background-color: #ddd;
-        }
-
-        .run {
-            background-color: #4caf50;
-            color: white;
-        }
-
-        .reset {
-            background-color: #f44336;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="controls">
@@ -99,10 +15,15 @@
             <div class="blocks">
                 <div class="block" draggable="true" data-command="up">Move Forward</div>
                 <div class="block" draggable="true" data-command="down">Move Backward</div>
-                <div class="block" draggable="true" data-command="left">Rotate Left</div>
-                <div class="block" draggable="true" data-command="right">Rotate Right</div>
+                <div class="block" draggable="true" data-command="rotate15left">Rotate 15° left</div>
+                <div class="block" draggable="true" data-command="rotate45left">Rotate 45° left</div>
+                <div class="block" draggable="true" data-command="rotate90left">Rotate 90° left</div>
+                <div class="block" draggable="true" data-command="rotate15right">Rotate 15° right</div>
+                <div class="block" draggable="true" data-command="rotate45right">Rotate 45° right</div>
+                <div class="block" draggable="true" data-command="rotate90right">Rotate 90° right</div>
             </div>
         </div>
+        
 
         <div>
             <h3>Programming Area</h3>
@@ -116,146 +37,6 @@
     </div>
 
     <canvas id="gameCanvas" width="400" height="400"></canvas>
-
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        const player1 = {
-            x: 200, 
-            y: 200, 
-            width: 30, 
-            height: 30, 
-            color: 'red', 
-            speed: 10, // Speed per frame
-            rotation: 0 // Rotation in degrees
-        };
-
-        const circle = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            radius: 150,
-            color: '#333'
-        };
-
-        const programmingArea = document.getElementById('programmingArea');
-
-        let commandsQueue = [];
-        let isExecuting = false;
-
-        // Drag-and-drop functionality
-        let draggedBlock = null;
-
-        document.querySelectorAll('.block').forEach(block => {
-            block.addEventListener('dragstart', (e) => {
-                draggedBlock = e.target;
-                draggedBlock.classList.add('dragging');
-            });
-
-            block.addEventListener('dragend', () => {
-                draggedBlock.classList.remove('dragging');
-                draggedBlock = null;
-            });
-        });
-
-        programmingArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
-        programmingArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (draggedBlock) {
-                const clone = draggedBlock.cloneNode(true);
-                clone.addEventListener('click', () => {
-                    programmingArea.removeChild(clone);
-                });
-                programmingArea.appendChild(clone);
-            }
-        });
-
-        // Reset programming area
-        function resetProgrammingArea() {
-            programmingArea.innerHTML = '';
-            commandsQueue = [];
-            isExecuting = false;
-        }
-
-        // Run commands
-        function runCommands() {
-            if (isExecuting) return;
-            commandsQueue = Array.from(programmingArea.children).map(block => block.dataset.command);
-            console.log('Running commands:', commandsQueue);
-            isExecuting = true;
-            executeCommands();
-        }
-
-        // Execute commands
-        function executeCommands() {
-            if (commandsQueue.length === 0) {
-                isExecuting = false;
-                return;
-            }
-
-            const command = commandsQueue.shift();
-
-            if (command === 'up' || command === 'down') {
-                const distance = command === 'up' ? player1.speed : -player1.speed;
-                slide(distance);
-            } else if (command === 'left') {
-                player1.rotation -= 15; // Rotate left
-                executeCommands();
-            } else if (command === 'right') {
-                player1.rotation += 15; // Rotate right
-                executeCommands();
-            }
-        }
-
-        function slide(distance) {
-            const steps = 20; // Number of steps for smooth movement
-            const stepX = (distance * Math.cos((Math.PI / 180) * player1.rotation)) / steps;
-            const stepY = (distance * Math.sin((Math.PI / 180) * player1.rotation)) / steps;
-            let currentStep = 0;
-
-            function step() {
-                if (currentStep >= steps) {
-                    executeCommands();
-                    return;
-                }
-
-                player1.x += stepX;
-                player1.y += stepY;
-                currentStep++;
-                draw();
-                requestAnimationFrame(step);
-            }
-
-            step();
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw outer square
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
-            // Draw inner circle
-            ctx.fillStyle = circle.color;
-            ctx.beginPath();
-            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw player with rotation
-            ctx.save();
-            ctx.translate(player1.x + player1.width / 2, player1.y + player1.height / 2);
-            ctx.rotate((Math.PI / 180) * player1.rotation);
-            ctx.fillStyle = player1.color;
-            ctx.fillRect(-player1.width / 2, -player1.height / 2, player1.width, player1.height);
-            ctx.restore();
-        }
-
-        draw(); // Initial draw
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
