@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Game</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Load background image
+        const backgroundImage = new Image();
+        backgroundImage.src = "image.png"; // Path to your uploaded image
+
+        // Player objects
+        const player1 = { x: 50, y: 180, width: 20, height: 20, color: 'red', speed: 2, dx: 0, dy: 0 };
+        const player2 = { x: 330, y: 180, width: 20, height: 20, color: 'blue', speed: 2, dx: 0, dy: 0 };
+
+        // Key states
+        const keys = {};
+
+        window.addEventListener('keydown', (e) => keys[e.key] = true);
+        window.addEventListener('keyup', (e) => keys[e.key] = false);
+
+        function update() {
+            // Reset velocities
+            player1.dx = 0;
+            player1.dy = 0;
+            player2.dx = 0;
+            player2.dy = 0;
+
+            // Player 1 controls (WASD)
+            if (keys['w']) player1.dy = -player1.speed;
+            if (keys['s']) player1.dy = player1.speed;
+            if (keys['a']) player1.dx = -player1.speed;
+            if (keys['d']) player1.dx = player1.speed;
+
+            // Player 2 controls (Arrow keys)
+            if (keys['ArrowUp']) player2.dy = -player2.speed;
+            if (keys['ArrowDown']) player2.dy = player2.speed;
+            if (keys['ArrowLeft']) player2.dx = -player2.speed;
+            if (keys['ArrowRight']) player2.dx = player2.speed;
+
+            // Predict new positions
+            const newPlayer1X = player1.x + player1.dx;
+            const newPlayer1Y = player1.y + player1.dy;
+            const newPlayer2X = player2.x + player2.dx;
+            const newPlayer2Y = player2.y + player2.dy;
+
+            // Check collision and handle pushing
+            if (
+                newPlayer1X < player2.x + player2.width &&
+                newPlayer1X + player1.width > player2.x &&
+                newPlayer1Y < player2.y + player2.height &&
+                newPlayer1Y + player1.height > player2.y
+            ) {
+                // Collision detected: Player 1 pushes Player 2
+                if (player1.dx !== 0) player2.x += player1.dx;
+                if (player1.dy !== 0) player2.y += player1.dy;
+
+                // Ensure Player 2 stays within bounds
+                player2.x = Math.max(0, Math.min(canvas.width - player2.width, player2.x));
+                player2.y = Math.max(0, Math.min(canvas.height - player2.height, player2.y));
+            } else {
+                // No collision: Update Player 1 position
+                player1.x = newPlayer1X;
+                player1.y = newPlayer1Y;
+            }
+
+            if (
+                newPlayer2X < player1.x + player1.width &&
+                newPlayer2X + player2.width > player1.x &&
+                newPlayer2Y < player1.y + player1.height &&
+                newPlayer2Y + player2.height > player1.y
+            ) {
+                // Collision detected: Player 2 pushes Player 1
+                if (player2.dx !== 0) player1.x += player2.dx;
+                if (player2.dy !== 0) player1.y += player2.dy;
+
+                // Ensure Player 1 stays within bounds
+                player1.x = Math.max(0, Math.min(canvas.width - player1.width, player1.x));
+                player1.y = Math.max(0, Math.min(canvas.height - player1.height, player1.y));
+            } else {
+                // No collision: Update Player 2 position
+                player2.x = newPlayer2X;
+                player2.y = newPlayer2Y;
+            }
+
+            // Keep players within bounds
+            player1.x = Math.max(0, Math.min(canvas.width - player1.width, player1.x));
+            player1.y = Math.max(0, Math.min(canvas.height - player1.height, player1.y));
+
+            player2.x = Math.max(0, Math.min(canvas.width - player2.width, player2.x));
+            player2.y = Math.max(0, Math.min(canvas.height - player2.height, player2.y));
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw background
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+            // Draw players
+            ctx.fillStyle = player1.color;
+            ctx.fillRect(player1.x, player1.y, player1.width, player1.height);
+
+            ctx.fillStyle = player2.color;
+            ctx.fillRect(player2.x, player2.y, player2.width, player2.height);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        backgroundImage.onload = () => {
+            gameLoop(); // Start the game loop once the background is loaded
+        };
+    </script>
+</body>
+</html>
