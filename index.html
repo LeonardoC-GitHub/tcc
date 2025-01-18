@@ -155,6 +155,9 @@
             e.preventDefault();
             if (draggedBlock) {
                 const clone = draggedBlock.cloneNode(true);
+                clone.addEventListener('click', () => {
+                    programmingArea.removeChild(clone);
+                });
                 programmingArea.appendChild(clone);
             }
         });
