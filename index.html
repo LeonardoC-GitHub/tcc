@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Game</title>
+    <title>2D Game - Circular Arena</title>
     <style>
         canvas {
             display: block;
             margin: 0 auto;
             background-color: #ccc;
+            border: 2px solid black;
         }
     </style>
 </head>
@@ -19,16 +20,20 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Load background image
-        const backgroundImage = new Image();
-        backgroundImage.src = "image.png"; // Path to your uploaded image
-
         // Player objects
-        const player1 = { x: 50, y: 180, width: 20, height: 20, color: 'red', speed: 2, dx: 0, dy: 0 };
-        const player2 = { x: 330, y: 180, width: 20, height: 20, color: 'blue', speed: 2, dx: 0, dy: 0 };
+        const player1 = { x: 150, y: 180, width: 20, height: 20, color: 'red', speed: 2, dx: 0, dy: 0 };
+        const player2 = { x: 230, y: 180, width: 20, height: 20, color: 'blue', speed: 2, dx: 0, dy: 0 };
 
         // Key states
         const keys = {};
+
+        // Circle properties
+        const circle = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 150,
+            color: '#333'
+        };
 
         window.addEventListener('keydown', (e) => keys[e.key] = true);
         window.addEventListener('keyup', (e) => keys[e.key] = false);
@@ -52,52 +57,15 @@
             if (keys['ArrowLeft']) player2.dx = -player2.speed;
             if (keys['ArrowRight']) player2.dx = player2.speed;
 
-            // Predict new positions
-            const newPlayer1X = player1.x + player1.dx;
-            const newPlayer1Y = player1.y + player1.dy;
-            const newPlayer2X = player2.x + player2.dx;
-            const newPlayer2Y = player2.y + player2.dy;
+            // Update positions with collision handling
+            movePlayer(player1, player2);
+            movePlayer(player2, player1);
 
-            // Check collision and handle pushing
-            if (
-                newPlayer1X < player2.x + player2.width &&
-                newPlayer1X + player1.width > player2.x &&
-                newPlayer1Y < player2.y + player2.height &&
-                newPlayer1Y + player1.height > player2.y
-            ) {
-                // Collision detected: Player 1 pushes Player 2
-                if (player1.dx !== 0) player2.x += player1.dx;
-                if (player1.dy !== 0) player2.y += player1.dy;
+            // Check collision with circle
+            if (!isInsideCircle(player1)) declareWinner(2);
+            if (!isInsideCircle(player2)) declareWinner(1);
 
-                // Ensure Player 2 stays within bounds
-                player2.x = Math.max(0, Math.min(canvas.width - player2.width, player2.x));
-                player2.y = Math.max(0, Math.min(canvas.height - player2.height, player2.y));
-            } else {
-                // No collision: Update Player 1 position
-                player1.x = newPlayer1X;
-                player1.y = newPlayer1Y;
-            }
-
-            if (
-                newPlayer2X < player1.x + player1.width &&
-                newPlayer2X + player2.width > player1.x &&
-                newPlayer2Y < player1.y + player1.height &&
-                newPlayer2Y + player2.height > player1.y
-            ) {
-                // Collision detected: Player 2 pushes Player 1
-                if (player2.dx !== 0) player1.x += player2.dx;
-                if (player2.dy !== 0) player1.y += player2.dy;
-
-                // Ensure Player 1 stays within bounds
-                player1.x = Math.max(0, Math.min(canvas.width - player1.width, player1.x));
-                player1.y = Math.max(0, Math.min(canvas.height - player1.height, player1.y));
-            } else {
-                // No collision: Update Player 2 position
-                player2.x = newPlayer2X;
-                player2.y = newPlayer2Y;
-            }
-
-            // Keep players within bounds
+            // Keep players within canvas bounds
             player1.x = Math.max(0, Math.min(canvas.width - player1.width, player1.x));
             player1.y = Math.max(0, Math.min(canvas.height - player1.height, player1.y));
 
@@ -105,11 +73,42 @@
             player2.y = Math.max(0, Math.min(canvas.height - player2.height, player2.y));
         }
 
+        function movePlayer(player, otherPlayer) {
+            const nextX = player.x + player.dx;
+            const nextY = player.y + player.dy;
+
+            // Predict collision with the other player
+            if (
+                nextX < otherPlayer.x + otherPlayer.width &&
+                nextX + player.width > otherPlayer.x &&
+                nextY < otherPlayer.y + otherPlayer.height &&
+                nextY + player.height > otherPlayer.y
+            ) {
+                // Push the other player
+                if (player.dx > 0) otherPlayer.x += player.dx;
+                if (player.dx < 0) otherPlayer.x += player.dx;
+                if (player.dy > 0) otherPlayer.y += player.dy;
+                if (player.dy < 0) otherPlayer.y += player.dy;
+            } else {
+                // Move the player normally
+                player.x = nextX;
+                player.y = nextY;
+            }
+        }
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw background
-            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            // Draw outer square
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+            // Draw inner circle
+            ctx.fillStyle = circle.color;
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.fill();
 
             // Draw players
             ctx.fillStyle = player1.color;
@@ -119,15 +118,36 @@
             ctx.fillRect(player2.x, player2.y, player2.width, player2.height);
         }
 
+        function isInsideCircle(player) {
+            const dx = player.x + player.width / 2 - circle.x;
+            const dy = player.y + player.height / 2 - circle.y;
+            return Math.sqrt(dx * dx + dy * dy) <= circle.radius;
+        }
+
+        function declareWinner(winner) {
+            alert(`Player ${winner} wins!`);
+            resetGame();
+        }
+
+        function resetGame() {
+            player1.x = 150;
+            player1.y = 180;
+            player1.dx = 0;
+            player1.dy = 0;
+
+            player2.x = 230;
+            player2.y = 180;
+            player2.dx = 0;
+            player2.dy = 0;
+        }
+
         function gameLoop() {
             update();
             draw();
             requestAnimationFrame(gameLoop);
         }
 
-        backgroundImage.onload = () => {
-            gameLoop(); // Start the game loop once the background is loaded
-        };
+        gameLoop(); // Start the game loop
     </script>
 </body>
 </html>
