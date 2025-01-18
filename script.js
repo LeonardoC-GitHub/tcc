@@ -7,7 +7,7 @@ const player1 = {
     width: 30, 
     height: 30, 
     color: 'red', 
-    speed: 10, 
+    speed: 30, 
     rotation: 0 
 };
 
@@ -70,6 +70,7 @@ function resetProgrammingArea() {
     programmingArea.innerHTML = '';
     commandsQueue = [];
     isExecuting = false;
+    resetGame();
 }
 
 function runCommands() {
@@ -86,43 +87,120 @@ function executeCommands() {
         return;
     }
 
+    if (!isInsideCircle(player1))            {
+        declareWinner(2);
+        isExecuting = false;
+        return;
+        }
+
+    if (!isInsideCircle(player2))
+        {
+        declareWinner(1);
+        isExecuting = false;
+        return;
+        } 
+
     const command = commandsQueue.shift();
 
     if (command === 'up' || command === 'down') {
         const distance = command === 'up' ? player1.speed : -player1.speed;
         slide(distance);
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))
+            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+            if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     } else if (command === 'rotate15left') {
         player1.rotation -= 15;
         executeCommands();
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     } else if (command === 'rotate15right') {
         player1.rotation += 15;
         executeCommands();
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     } else if (command === 'rotate45left') {
         player1.rotation -= 45;
         executeCommands();
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     } else if (command === 'rotate45right') {
         player1.rotation += 45;
         executeCommands();
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     } else if (command === 'rotate90left') {
         player1.rotation += 90;
         executeCommands();
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     } else if (command === 'rotate90right') {
         player1.rotation += 90;
         executeCommands();
-        if (!isInsideCircle(player1)) declareWinner(2);
-        if (!isInsideCircle(player2)) declareWinner(1);
+        if (!isInsideCircle(player1))            {
+            declareWinner(2);
+            isExecuting = false;
+            return;
+            }
+        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
+            {
+            declareWinner(1);
+            isExecuting = false;
+            return;
+            } 
     }
 }
 
@@ -193,7 +271,7 @@ function declareWinner(winner) {
 
 
 function resetGame() {
-    player1.x = 150;
+    player1.x = 140;
     player1.y = 185;
     player1.dx = 0;
     player1.dy = 0;
@@ -202,7 +280,7 @@ function resetGame() {
     player2.y = 185;
     player2.dx = 0;
     player2.dy = 0;
-
+    isExecuting = false;
     draw(); // Start the game loop when the image is loaded
 }
 
