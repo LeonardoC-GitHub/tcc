@@ -21,8 +21,8 @@
         const ctx = canvas.getContext('2d');
 
         // Player objects
-        const player1 = { x: 150, y: 180, width: 20, height: 20, color: 'red', speed: 2, dx: 0, dy: 0 };
-        const player2 = { x: 230, y: 180, width: 20, height: 20, color: 'blue', speed: 2, dx: 0, dy: 0 };
+        const player1 = { x: 140, y: 185, width: 30, height: 30, color: 'red', speed: 2, dx: 0, dy: 0 };
+        const player2 = { x: 230, y: 185, width: 30, height: 30, color: 'blue', speed: 2, dx: 0, dy: 0 };
 
         // Key states
         const keys = {};
@@ -34,6 +34,10 @@
             radius: 150,
             color: '#333'
         };
+
+        // Load the background image for the circle
+        const circleImage = new Image();
+        circleImage.src = "dojo.jpg"; // Replace with your image path
 
         window.addEventListener('keydown', (e) => keys[e.key] = true);
         window.addEventListener('keyup', (e) => keys[e.key] = false);
@@ -105,10 +109,15 @@
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // Draw inner circle
-            ctx.fillStyle = circle.color;
+            ctx.save(); // Save the current context state
             ctx.beginPath();
             ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.clip(); // Clip the drawing area to the circle
+
+            // Draw the image inside the circle
+            ctx.drawImage(circleImage, circle.x - circle.radius, circle.y - circle.radius, circle.radius * 2, circle.radius * 2);
+
+            ctx.restore(); // Restore the context state
 
             // Draw players
             ctx.fillStyle = player1.color;
@@ -130,18 +139,16 @@
         }
 
         function resetGame() {
-            
-          //reseta pocicoes
             player1.x = 150;
             player1.y = 180;
             player1.dx = 0;
             player1.dy = 0;
-          //reseta as velocidades
+
             player2.x = 230;
             player2.y = 180;
             player2.dx = 0;
             player2.dy = 0;
-            
+
             location.reload(); // Recarrega a página
         }
 
@@ -151,7 +158,9 @@
             requestAnimationFrame(gameLoop);
         }
 
-        gameLoop(); // Start the game loop
+        circleImage.onload = () => {
+            gameLoop(); // Start the game loop when the image is loaded
+        };
     </script>
 </body>
 </html>
