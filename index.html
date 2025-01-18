@@ -130,15 +130,19 @@
         }
 
         function resetGame() {
+            
+          //reseta pocicoes
             player1.x = 150;
             player1.y = 180;
             player1.dx = 0;
             player1.dy = 0;
-
+          //reseta as velocidades
             player2.x = 230;
             player2.y = 180;
             player2.dx = 0;
             player2.dy = 0;
+            
+            location.reload(); // Recarrega a página
         }
 
         function gameLoop() {
