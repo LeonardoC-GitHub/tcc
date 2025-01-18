@@ -97,10 +97,10 @@
         <div>
             <h3>Available Blocks</h3>
             <div class="blocks">
-                <div class="block" draggable="true" data-command="up">Move Up</div>
-                <div class="block" draggable="true" data-command="down">Move Down</div>
-                <div class="block" draggable="true" data-command="left">Move Left</div>
-                <div class="block" draggable="true" data-command="right">Move Right</div>
+                <div class="block" draggable="true" data-command="up">Move Forward</div>
+                <div class="block" draggable="true" data-command="down">Move Backward</div>
+                <div class="block" draggable="true" data-command="left">Rotate Left</div>
+                <div class="block" draggable="true" data-command="right">Rotate Right</div>
             </div>
         </div>
 
@@ -121,7 +121,15 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        const player1 = { x: 140, y: 185, width: 30, height: 30, color: 'red', speed: 10 };
+        const player1 = {
+            x: 200, 
+            y: 200, 
+            width: 30, 
+            height: 30, 
+            color: 'red', 
+            speed: 10, // Speed per frame
+            rotation: 0 // Rotation in degrees
+        };
 
         const circle = {
             x: canvas.width / 2,
@@ -131,6 +139,9 @@
         };
 
         const programmingArea = document.getElementById('programmingArea');
+
+        let commandsQueue = [];
+        let isExecuting = false;
 
         // Drag-and-drop functionality
         let draggedBlock = null;
@@ -165,40 +176,60 @@
         // Reset programming area
         function resetProgrammingArea() {
             programmingArea.innerHTML = '';
+            commandsQueue = [];
+            isExecuting = false;
         }
 
         // Run commands
         function runCommands() {
-            const commands = Array.from(programmingArea.children).map(block => block.dataset.command);
-            console.log('Running commands:', commands);
-
-            executeCommands(commands, () => {
-                console.log('All commands executed');
-            });
+            if (isExecuting) return;
+            commandsQueue = Array.from(programmingArea.children).map(block => block.dataset.command);
+            console.log('Running commands:', commandsQueue);
+            isExecuting = true;
+            executeCommands();
         }
 
         // Execute commands
-        function executeCommands(commands, callback) {
-            let i = 0;
+        function executeCommands() {
+            if (commandsQueue.length === 0) {
+                isExecuting = false;
+                return;
+            }
 
-            function executeNextCommand() {
-                if (i >= commands.length) {
-                    if (callback) callback();
+            const command = commandsQueue.shift();
+
+            if (command === 'up' || command === 'down') {
+                const distance = command === 'up' ? player1.speed : -player1.speed;
+                slide(distance);
+            } else if (command === 'left') {
+                player1.rotation -= 15; // Rotate left
+                executeCommands();
+            } else if (command === 'right') {
+                player1.rotation += 15; // Rotate right
+                executeCommands();
+            }
+        }
+
+        function slide(distance) {
+            const steps = 20; // Number of steps for smooth movement
+            const stepX = (distance * Math.cos((Math.PI / 180) * player1.rotation)) / steps;
+            const stepY = (distance * Math.sin((Math.PI / 180) * player1.rotation)) / steps;
+            let currentStep = 0;
+
+            function step() {
+                if (currentStep >= steps) {
+                    executeCommands();
                     return;
                 }
 
-                const command = commands[i];
-                if (command === 'up') player1.y -= player1.speed;
-                if (command === 'down') player1.y += player1.speed;
-                if (command === 'left') player1.x -= player1.speed;
-                if (command === 'right') player1.x += player1.speed;
-
-                i++;
+                player1.x += stepX;
+                player1.y += stepY;
+                currentStep++;
                 draw();
-                setTimeout(executeNextCommand, 500); // Delay between commands
+                requestAnimationFrame(step);
             }
 
-            executeNextCommand();
+            step();
         }
 
         function draw() {
@@ -215,9 +246,13 @@
             ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Draw player
+            // Draw player with rotation
+            ctx.save();
+            ctx.translate(player1.x + player1.width / 2, player1.y + player1.height / 2);
+            ctx.rotate((Math.PI / 180) * player1.rotation);
             ctx.fillStyle = player1.color;
-            ctx.fillRect(player1.x, player1.y, player1.width, player1.height);
+            ctx.fillRect(-player1.width / 2, -player1.height / 2, player1.width, player1.height);
+            ctx.restore();
         }
 
         draw(); // Initial draw
