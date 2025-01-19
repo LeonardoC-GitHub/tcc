@@ -185,156 +185,124 @@ function resolveCollision() {
     }
 }
 
+// Função de movimentação com suporte a Promises
 function slide(player, distance) {
-    const steps = 20;
-    const stepX = (distance * Math.cos((Math.PI / 180) * player.rotation)) / steps;
-    const stepY = (distance * Math.sin((Math.PI / 180) * player.rotation)) / steps;
-    let currentStep = 0;
+    return new Promise((resolve) => {
+        const steps = 40;
+        const stepX = (distance * Math.cos((Math.PI / 180) * player.rotation)) / steps;
+        const stepY = (distance * Math.sin((Math.PI / 180) * player.rotation)) / steps;
+        let currentStep = 0;
 
-    function step() {
-        if (currentStep >= steps) {
-            executeCommands();
+        function step() {
+            if (currentStep >= steps) {
+                resolve(); // Movimento concluído
+                return;
+            }
+
+            const originalX = player.x;
+            const originalY = player.y;
+
+            player.x += stepX;
+            player.y += stepY;
+
+            // Verifica colisões
+            if (arePlayersColliding()) {
+                resolveCollision();
+            }
+
+            currentStep++;
+            draw(); // Atualiza o canvas
+            requestAnimationFrame(step);
+        }
+
+        // Verifica se os jogadores ainda estão dentro do círculo antes de iniciar o movimento
+        if (!isInsideCircle(player1)) {
+            declareWinner(2);
+            isExecuting = false;
             return;
         }
 
-        const originalX = player.x;
-        const originalY = player.y;
-
-        player.x += stepX;
-        player.y += stepY;
-
-        // Check collisions
-        if (arePlayersColliding()) {
-            resolveCollision();
+        if (!isInsideCircle(player2)) {
+            declareWinner(1);
+            isExecuting = false;
+            return;
         }
 
-        currentStep++;
-        draw();
-        requestAnimationFrame(step);
-    }
-    if (!isInsideCircle(player1))
-        {
-        declareWinner(2);
-        isExecuting = false;
-        return;
-        }
-     if (!isInsideCircle(player2))
-        {
-        declareWinner(1);
-        isExecuting = false;
-        return;
-        } 
-    step();
+        step(); // Inicia o movimento
+    });
 }
 
-function executeCommands() {
+// Função de execução de comandos ajustada
+async function executeCommands() {
     if (commandsQueue.length === 0) {
         isExecuting = false;
         return;
     }
-    if (!isInsideCircle(player1))            {
+
+    // Verifica se os jogadores estão dentro do círculo
+    if (!isInsideCircle(player1)) {
         declareWinner(2);
         isExecuting = false;
         return;
-        }
+    }
 
-    if (!isInsideCircle(player2))
-        {
+    if (!isInsideCircle(player2)) {
         declareWinner(1);
         isExecuting = false;
         return;
-        } 
+    }
 
     const command = commandsQueue.shift();
 
     if (command === 'up' || command === 'down') {
         const distance = command === 'up' ? player1.speed : -player1.speed;
-        slide(player1, distance);
-    } else if (command === 'rotate15left') {
-        player1.rotation -= 15;
-        if (!isInsideCircle(player1))            {
-            declareWinner(2);
-            isExecuting = false;
-            return;
-            }
-        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
-            {
-            declareWinner(1);
-            isExecuting = false;
-            return;
-            } 
-        executeCommands();
-    } else if (command === 'rotate15right') {
-        player1.rotation += 15;
-        if (!isInsideCircle(player1))            {
-            declareWinner(2);
-            isExecuting = false;
-            return;
-            }
-        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
-            {
-            declareWinner(1);
-            isExecuting = false;
-            return;
-            } 
-        executeCommands();
-    } else if (command === 'rotate45left') {
-        player1.rotation -= 45;
-        if (!isInsideCircle(player1))            {
-            declareWinner(2);
-            isExecuting = false;
-            return;
-            }
-        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
-            {
-            declareWinner(1);
-            isExecuting = false;
-            return;
-            } 
-        executeCommands();
-    } else if (command === 'rotate45right') {
-        player1.rotation += 45;
-        if (!isInsideCircle(player1))            {
-            declareWinner(2);
-            isExecuting = false;
-            return;
-            }
-        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
-            {
-            declareWinner(1);
-            isExecuting = false;
-            return;
-            } 
-        executeCommands();
-    } else if (command === 'rotate90left') {
-        player1.rotation -= 90;
-        if (!isInsideCircle(player1))            {
-            declareWinner(2);
-            isExecuting = false;
-            return;
-            }
-        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
-            {
-            declareWinner(1);
-            isExecuting = false;
-            return;
-            } 
-        executeCommands();
-    } else if (command === 'rotate90right') {
-        player1.rotation += 90;
-        if (!isInsideCircle(player1))            {
-            declareWinner(2);
-            isExecuting = false;
-            return;
-            }
-        if (!isInsideCircle(player2))  if (!isInsideCircle(player2))
-            {
-            declareWinner(1);
-            isExecuting = false;
-            return;
-            } 
-        executeCommands();
+        await slide(player1, distance); // Aguarda a movimentação
+    } else if (command.startsWith('rotate')) {
+        const rotationSteps = {
+            rotate15left: -15,
+            rotate15right: 15,
+            rotate45left: -45,
+            rotate45right: 45,
+            rotate90left: -90,
+            rotate90right: 90,
+        };
+        const targetRotation = player1.rotation + rotationSteps[command];
+        await animateRotation(player1, targetRotation, Math.sign(rotationSteps[command])); // Aguarda a rotação
     }
+
+    // Verifica novamente se os jogadores estão dentro do círculo
+    if (!isInsideCircle(player1)) {
+        declareWinner(2);
+        isExecuting = false;
+        return;
+    }
+
+    if (!isInsideCircle(player2)) {
+        declareWinner(1);
+        isExecuting = false;
+        return;
+    }
+
+    // Continua com o próximo comando
+    executeCommands();
+}
+
+// Função de animação de rotação
+function animateRotation(player, targetRotation, rotationStep) {
+    return new Promise((resolve) => {
+        const rotate = () => {
+            if (Math.abs(player.rotation - targetRotation) > 1) {
+                player.rotation += rotationStep; // Gira o jogador aos poucos
+                draw();  // Atualiza o canvas com a nova rotação
+                requestAnimationFrame(rotate); // Chama a próxima animação
+            } else {
+                player.rotation = targetRotation; // Garante que a rotação chegue exatamente no alvo
+                draw();  // Redesenha o player no alvo final
+                resolve(); // Notifica que a rotação foi concluída
+            }
+        };
+        rotate(); // Inicia a animação
+    });
 }
 
 function draw() {
