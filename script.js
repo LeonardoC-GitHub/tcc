@@ -109,8 +109,21 @@ function isInsideCircle(player) {
 }
 
 function declareWinner(winner) {
-    alert(`Player ${winner} wins!`);
+    const winnerText = document.getElementById('winnerText');
+    
+    // Exibe o vencedor com base no parâmetro 'winner'
+    winnerText.textContent = `Player ${winner} wins!`;
+
+    const modal = document.getElementById('winnerModal');
+    modal.style.display = 'flex'; // Exibe o modal
+
+    // Opção de reiniciar o jogo (caso queira adicionar a lógica)
     resetGame();
+}
+
+function closeModal() {
+    const modal = document.getElementById('winnerModal');
+    modal.style.display = 'none'; // Fecha o modal
 }
 
 
