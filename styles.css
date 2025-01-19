@@ -3,9 +3,23 @@ body {
     text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    color: #333;
+    position: relative; /* Necessário para posicionar a pseudo-camada */
+    overflow: hidden; /* Evita scroll devido à pseudo-camada */
 }
 
+body::before {
+    content: "";
+    position: fixed; /* Garante que a camada fique fixa na tela */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('fundoGame.png') no-repeat center center;
+    background-size: cover;
+    opacity: 0.95; /* Ajuste a opacidade aqui (0.1 a 1) */
+    z-index: -1; /* Coloca a camada atrás do conteúdo do body */
+}
 canvas {
     display: block;
     background-color: #ddd;
