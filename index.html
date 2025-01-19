@@ -31,12 +31,20 @@
         </div>
 
         <div class="actions">
-            <button class="run" onclick="runCommands()">Run Commands</button>
-            <button class="reset" onclick="resetProgrammingArea()">Reset</button>
+            <button class="run" onclick="runCommands()">Executar</button>
+            <button class="reset" onclick="resetProgrammingArea()">Limpar</button>
         </div>
     </div>
-
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+   
+        <div class="canvas-container">
+            <div class="Contbutton">
+                <button id="resetButton" class="reset-button">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+        </div>    
+    
     <script src="script.js"></script>
 </body>
 </html>

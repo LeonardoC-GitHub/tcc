@@ -8,10 +8,10 @@ body {
 
 canvas {
     display: block;
-    margin: 20px auto;
     background-color: #ddd;
     border: 4px solid #333;
     border-radius: 10px;
+    margin-right: 15%;
 }
 
 #controls {
@@ -80,4 +80,65 @@ canvas {
 .reset {
     background-color: #f44336;
     color: white;
+}
+
+/* Contêiner para centralizar o botão e o canvas */
+.canvas-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    width: 100vw;
+}
+
+/* Estilos para o botão de reset */
+.reset-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-size: 24px;
+    color: white;
+    transition: transform 0.2s;
+}
+
+.reset-button:hover {
+    transform: scale(1.1);
+}
+
+.reset-button:active {
+    transform: scale(0.9);
+}
+
+/* Animação de rotação */
+.rotating {
+    animation: spin 1s linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estilos para o canvas */
+#gameCanvas {
+    border: 1px solid #000;
+}
+
+.Contbutton{
+    display: flex;
+    width: 9%;
+    justify-content: center;
+    margin-left: 6%;
+    padding-bottom: 9%;
 }

@@ -17,7 +17,7 @@ const player2 = {
     width: 30,
     height: 30, 
     color: 'blue', 
-    speed: 2, 
+    speed: 20, 
     rotation: 0 
 };
 
@@ -104,11 +104,13 @@ function resetGame() {
     player1.y = 185;
     player1.dx = 0;
     player1.dy = 0;
+    player1.rotation = 0;
 
     player2.x = 230;
     player2.y = 185;
     player2.dx = 0;
     player2.dy = 0;
+    player2.rotation = 0;
     isExecuting = false;
     draw(); // Start the game loop when the image is loaded
 }
