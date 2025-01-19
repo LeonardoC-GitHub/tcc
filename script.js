@@ -11,6 +11,14 @@ const player1 = {
     rotation: 0 
 };
 
+
+// Load the background image for player
+const player1Image = new Image();
+player1Image.src = "Robolego1.png"; // Replace with your image path
+
+const player2Image = new Image();
+player2Image.src = "Robolego2.png"; // Replace with your image path
+
 const player2 = {
     x: 230,
     y: 185,
@@ -83,6 +91,14 @@ function runCommands() {
 circleImage.onload = () => {
     draw(); // Start the game loop when the image is loaded
 };
+player1Image.onload = () =>
+{
+    draw(); // Start the game loop when the image is loaded
+};
+player2Image.onload = () =>
+    {
+        draw(); // Start the game loop when the image is loaded
+    };
 
 function isInsideCircle(player) {
     const dx = Math.abs(player.x + player.width / 2 - circle.x);
@@ -326,15 +342,17 @@ function draw() {
     ctx.save();
     ctx.translate(player1.x + player1.width / 2, player1.y + player1.height / 2);
     ctx.rotate((Math.PI / 180) * player1.rotation);
-    ctx.fillStyle = player1.color;
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(-player1.width / 2, -player1.height / 2, player1.width, player1.height);
+    ctx.drawImage(player1Image, -player1.width / 2, -player1.height / 2, player1.width, player1.height);
     ctx.restore();
 
     ctx.save();
     ctx.translate(player2.x + player2.width / 2, player2.y + player2.height / 2);
     ctx.rotate((Math.PI / 180) * player2.rotation);
-    ctx.fillStyle = player2.color;
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(-player2.width / 2, -player2.height / 2, player2.width, player2.height);
+    ctx.drawImage(player2Image, -player2.width / 2, -player2.height / 2, player2.width, player2.height);
     ctx.restore();
 }
 
