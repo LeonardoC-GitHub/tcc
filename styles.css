@@ -105,6 +105,7 @@ canvas {
     outline: none;
     font-size: 24px;
     color: white;
+    position: relative; /* Necessário para o posicionamento do pseudo-elemento */
     transition: transform 0.2s;
 }
 
@@ -117,10 +118,11 @@ canvas {
 }
 
 /* Animação de rotação */
-.rotating {
-    animation: spin 1s linear;
+.rotating svg {
+    animation: spin 1s linear infinite;
 }
 
+/* Animação de rotação */
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -128,8 +130,8 @@ canvas {
     100% {
         transform: rotate(360deg);
     }
+ 
 }
-
 /* Estilos para o canvas */
 #gameCanvas {
     border: 1px solid #000;

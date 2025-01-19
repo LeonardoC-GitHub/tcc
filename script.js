@@ -70,7 +70,6 @@ function resetProgrammingArea() {
     programmingArea.innerHTML = '';
     commandsQueue = [];
     isExecuting = false;
-    resetGame();
 }
 
 function runCommands() {
@@ -342,3 +341,31 @@ function draw() {
 circleImage.onload = () => {
     draw();
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    resetGame();
+    const resetButton = document.getElementById("resetButton");
+    const gameCanvas = document.getElementById("gameCanvas");
+    const ctx = gameCanvas.getContext("2d");
+
+
+    // Inicializa o canvas com uma cor de fundo
+    ctx.fillStyle = "#d3d3d3";
+    ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+    // Função de reset
+    resetButton.addEventListener("click", () => {
+        resetButton.classList.add("rotating");
+
+        setTimeout(() => {
+            resetButton.classList.remove("rotating");
+
+            console.log("Dojo resetado!");
+        }, 1000); // Duração da animação
+    });
+ 
+    resetButton.addEventListener("click", () => {
+        resetGame();
+    });
+});
