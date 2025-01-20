@@ -3,164 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Game - Circular Arena</title>
-    <style>
-        canvas {
-            display: block;
-            margin: 0 auto;
-            background-color: #ccc;
-            border: 2px solid black;
-        }
-    </style>
+    <title>Simulador Sumo Lego- 2D Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="controls">
+        <h2>Drag-and-Drop Programming - Control Your Robots</h2>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+        <div class="conteiner-blocos">
+            <h3>Blocos de comandos disponíveis</h3>
+            <div class="blocks">
+                <div class="block" draggable="true" data-command="up">Para frente</div>
+                <div class="block" draggable="true" data-command="down">Para traz</div>
+                <div class="block" draggable="true" data-command="rotate15left">Girar 15° esquerda</div>
+                <div class="block" draggable="true" data-command="rotate45left">Girar 45° esquerda</div>
+                <div class="block" draggable="true" data-command="rotate90left">Girar 90° esquerda</div>
+                <div class="block" draggable="true" data-command="rotate15right">Girar 15° direita</div>
+                <div class="block" draggable="true" data-command="rotate45right">Girar 45° direita</div>
+                <div class="block" draggable="true" data-command="rotate90right">Girar 90° direita</div>
+            </div>
+        </div>
+        
 
-        // Player objects
-        const player1 = { x: 140, y: 185, width: 30, height: 30, color: 'red', speed: 2, dx: 0, dy: 0 };
-        const player2 = { x: 230, y: 185, width: 30, height: 30, color: 'blue', speed: 2, dx: 0, dy: 0 };
+        <div class="Area-promagrama">
+            <h3>Área de programação</h3>
+            <div id="programmingArea" class="programming-area"></div>
+        </div>
 
-        // Key states
-        const keys = {};
+        <div class="actions">
+            <button class="run" onclick="runCommands()">Executar</button>
+            <button class="reset" onclick="resetProgrammingArea()">Limpar</button>
+        </div>
+    </div>
+   
+        <div class="canvas-container">
+            <div class="Contbutton">
+                <button id="resetButton" class="reset-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2v6h-6"></path>
+                        <path d="M3 12a9 9 0 0 1 9-9h3"></path>
+                        <path d="M3 22v-6h6"></path>
+                        <path d="M21 12a9 9 0 0 1-9 9h-3"></path>
+                    </svg>
+                </button>
+            </div>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+        </div>    
 
-        // Circle properties
-        const circle = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            radius: 150,
-            color: '#333'
-        };
-
-        // Load the background image for the circle
-        const circleImage = new Image();
-        circleImage.src = "dojo.jpg"; // Replace with your image path
-
-        window.addEventListener('keydown', (e) => keys[e.key] = true);
-        window.addEventListener('keyup', (e) => keys[e.key] = false);
-
-        function update() {
-            // Reset velocities
-            player1.dx = 0;
-            player1.dy = 0;
-            player2.dx = 0;
-            player2.dy = 0;
-
-            // Player 1 controls (WASD)
-            if (keys['w']) player1.dy = -player1.speed;
-            if (keys['s']) player1.dy = player1.speed;
-            if (keys['a']) player1.dx = -player1.speed;
-            if (keys['d']) player1.dx = player1.speed;
-
-            // Player 2 controls (Arrow keys)
-            if (keys['ArrowUp']) player2.dy = -player2.speed;
-            if (keys['ArrowDown']) player2.dy = player2.speed;
-            if (keys['ArrowLeft']) player2.dx = -player2.speed;
-            if (keys['ArrowRight']) player2.dx = player2.speed;
-
-            // Update positions with collision handling
-            movePlayer(player1, player2);
-            movePlayer(player2, player1);
-
-            // Check collision with circle
-            if (!isInsideCircle(player1)) declareWinner(2);
-            if (!isInsideCircle(player2)) declareWinner(1);
-
-            // Keep players within canvas bounds
-            player1.x = Math.max(0, Math.min(canvas.width - player1.width, player1.x));
-            player1.y = Math.max(0, Math.min(canvas.height - player1.height, player1.y));
-
-            player2.x = Math.max(0, Math.min(canvas.width - player2.width, player2.x));
-            player2.y = Math.max(0, Math.min(canvas.height - player2.height, player2.y));
-        }
-
-        function movePlayer(player, otherPlayer) {
-            const nextX = player.x + player.dx;
-            const nextY = player.y + player.dy;
-
-            // Predict collision with the other player
-            if (
-                nextX < otherPlayer.x + otherPlayer.width &&
-                nextX + player.width > otherPlayer.x &&
-                nextY < otherPlayer.y + otherPlayer.height &&
-                nextY + player.height > otherPlayer.y
-            ) {
-                // Push the other player
-                if (player.dx > 0) otherPlayer.x += player.dx;
-                if (player.dx < 0) otherPlayer.x += player.dx;
-                if (player.dy > 0) otherPlayer.y += player.dy;
-                if (player.dy < 0) otherPlayer.y += player.dy;
-            } else {
-                // Move the player normally
-                player.x = nextX;
-                player.y = nextY;
-            }
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw outer square
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
-            // Draw inner circle
-            ctx.save(); // Save the current context state
-            ctx.beginPath();
-            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
-            ctx.clip(); // Clip the drawing area to the circle
-
-            // Draw the image inside the circle
-            ctx.drawImage(circleImage, circle.x - circle.radius, circle.y - circle.radius, circle.radius * 2, circle.radius * 2);
-
-            ctx.restore(); // Restore the context state
-
-            // Draw players
-            ctx.fillStyle = player1.color;
-            ctx.fillRect(player1.x, player1.y, player1.width, player1.height);
-
-            ctx.fillStyle = player2.color;
-            ctx.fillRect(player2.x, player2.y, player2.width, player2.height);
-        }
-
-        function isInsideCircle(player) {
-            const dx = player.x + player.width / 2 - circle.x;
-            const dy = player.y + player.height / 2 - circle.y;
-            return Math.sqrt(dx * dx + dy * dy) <= circle.radius;
-        }
-
-        function declareWinner(winner) {
-            alert(`Player ${winner} wins!`);
-            resetGame();
-        }
-
-        function resetGame() {
-            player1.x = 150;
-            player1.y = 180;
-            player1.dx = 0;
-            player1.dy = 0;
-
-            player2.x = 230;
-            player2.y = 180;
-            player2.dx = 0;
-            player2.dy = 0;
-
-            location.reload(); // Recarrega a página
-        }
-
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        circleImage.onload = () => {
-            gameLoop(); // Start the game loop when the image is loaded
-        };
-    </script>
+           <!-- Modal de vencedor -->
+    <div id="winnerModal" class="winner-modal">
+        <div class="winner-modal-content">
+            <h2 id="winnerText" class="winner-text">Player 1 wins!</h2>
+            <button id="closeModal" class="winner-button" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
