@@ -2,11 +2,10 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const player1 = {
-    x: 140, 
-    y: 185, 
-    width: 30, 
-    height: 30, 
-    color: 'red', 
+    x: 0, 
+    y: 155, 
+    width:65, 
+    height: 65, 
     speed: 30, 
     rotation: 0 
 };
@@ -22,9 +21,8 @@ player2Image.src = "Robolego2.png"; // Replace with your image path
 const player2 = {
     x: 230,
     y: 185,
-    width: 30,
-    height: 30, 
-    color: 'blue', 
+    width: 65,
+    height: 65, 
     speed: 20, 
     rotation: 0 
 };
@@ -128,14 +126,14 @@ function closeModal() {
 
 
 function resetGame() {
-    player1.x = 140;
-    player1.y = 185;
+    player1.x = 105;
+    player1.y = 168;
     player1.dx = 0;
     player1.dy = 0;
     player1.rotation = 0;
 
     player2.x = 230;
-    player2.y = 185;
+    player2.y = 168     ;
     player2.dx = 0;
     player2.dy = 0;
     player2.rotation = 0;
