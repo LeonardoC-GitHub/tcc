@@ -187,8 +187,8 @@ function resolveCollision() {
 function slide(player, distance) {
     return new Promise((resolve) => {
         const steps = 60;
-        const stepX = (distance * Math.cos((Math.PI / 180) * player.rotation)) / steps;
-        const stepY = (distance * Math.sin((Math.PI / 180) * player.rotation)) / steps;
+        const stepX = ((distance + 20) * Math.cos((Math.PI / 180) * player.rotation)) / steps;
+        const stepY = ((distance + 20) * Math.sin((Math.PI / 180) * player.rotation)) / steps;
         let currentStep = 0;
 
         function step() {
