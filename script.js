@@ -188,7 +188,7 @@ function resolveCollision() {
 // Função de movimentação com suporte a Promises
 function slide(player, distance) {
     return new Promise((resolve) => {
-        const steps = 40;
+        const steps = 60;
         const stepX = (distance * Math.cos((Math.PI / 180) * player.rotation)) / steps;
         const stepY = (distance * Math.sin((Math.PI / 180) * player.rotation)) / steps;
         let currentStep = 0;
