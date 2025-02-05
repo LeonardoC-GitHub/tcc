@@ -262,3 +262,69 @@ width: 100%;
         opacity: 1;
     }
 }
+/* Estilos para o novo botão circular */
+.help-button {
+    position: fixed;
+    bottom: 20px;  /* Distância do botão do fundo da tela */
+    right: 20px;   /* Distância do botão da direita da tela */
+    width: 30px;   /* Largura do botão */
+    height: 30px;  /* Altura do botão */
+    border-radius: 50%;  /* Tornar o botão circular */
+    background-color: #000; /* Cor de fundo do botão */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.help-button:hover {
+    background-color: #f80202;  /* Cor do botão ao passar o mouse */
+}
+
+.help-button svg {
+    fill: white; /* Cor do ícone dentro do botão */
+}
+/* Estilos para a janela amigável */
+.blank-window {
+    width: 400px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+/* Estilos para o conteúdo dentro da janela */
+.blank-window-content {
+    margin-bottom: 20px;
+}
+
+/* Estilos para o botão de fechar */
+.close-button {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    padding: 6px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+    background-color: #e0e0e0;
+}

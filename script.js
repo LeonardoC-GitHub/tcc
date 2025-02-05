@@ -366,3 +366,31 @@ document.addEventListener("DOMContentLoaded", () => {
         resetGame();
     });
 });
+
+document.getElementById('helpButton').addEventListener('click', function() {
+    // Criar a janela amigável
+    var blankWindow = document.createElement('div');
+    blankWindow.className = 'blank-window';
+    
+    // Conteúdo da janela amigável
+    var content = document.createElement('div');
+    content.className = 'blank-window-content';
+    content.innerHTML = `
+        <h2>Bem-vindo à Janela Amigável!</h2>
+        <p>Aqui você encontra informações úteis para ajudá-lo.</p>
+        <p>Adicione o conteúdo que desejar para guiar o usuário.</p>
+    `;
+    blankWindow.appendChild(content);
+    
+    // Botão de fechar
+    var closeButton = document.createElement('div');
+    closeButton.className = 'close-button';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', function() {
+        document.body.removeChild(blankWindow);
+    });
+    blankWindow.appendChild(closeButton);
+    
+    // Adicionar a janela amigável ao body
+    document.body.appendChild(blankWindow);
+});
