@@ -152,19 +152,84 @@ function arePlayersColliding() {
         player1.y + player1.height > player2.y
     );
 }
+function rotatePlayer(player, targetRotation) {
+    return new Promise((resolve) => {
+        const steps = 5; // Número de frames para suavizar a rotação
+        const stepRotation = (targetRotation - player.rotation) / steps;
+        let currentStep = 0;
 
-// Handle collision resolution and allow players to push each other
-function resolveCollision() {
-    // Definição das zonas de colisão de cada player
-    function getHitbox(player) {
-        return {
-            front: { x: player.x + player.width / 4, y: player.y, width: player.width / 2, height: player.height / 4 },
-            back: { x: player.x + player.width / 4, y: player.y + (3 * player.height) / 4, width: player.width / 2, height: player.height / 4 },
-            left: { x: player.x, y: player.y + player.height / 4, width: player.width / 4, height: player.height / 2 },
-            right: { x: player.x + (3 * player.width) / 4, y: player.y + player.height / 4, width: player.width / 4, height: player.height / 2 }
-        };
+        function step() {
+            if (currentStep >= steps) {
+                player.rotation = targetRotation;
+                resolve();
+                return;
+            }
+
+            player.rotation += stepRotation;
+            currentStep++;
+            draw(); // Atualiza o canvas
+            requestAnimationFrame(step);
+        }
+
+        step();
+    });
+}
+
+function getHitbox(player) {
+    return {
+        front: { 
+            x: player.x + player.width * 0.35, 
+            y: player.y, 
+            width: player.width * 0.3, 
+            height: player.height * 0.2 
+        },
+        back: { 
+            x: player.x + player.width * 0.35, 
+            y: player.y + player.height * 0.8, 
+            width: player.width * 0.3, 
+            height: player.height * 0.2 
+        },
+        left: { 
+            x: player.x, 
+            y: player.y + player.height * 0.35, 
+            width: player.width * 0.2, 
+            height: player.height * 0.3 
+        },
+        right: { 
+            x: player.x + player.width * 0.8, 
+            y: player.y + player.height * 0.35, 
+            width: player.width * 0.2, 
+            height: player.height * 0.3 
+        }
+    };
+}
+
+function countCollidingHitboxes(hitbox1, hitbox2) {
+    let count = 0;
+
+    for (const key1 in hitbox1) {
+        for (const key2 in hitbox2) {
+            if (isColliding(hitbox1[key1], hitbox2[key2])) {
+                count++;
+            }
+        }
     }
 
+    return count;
+}
+
+// Verifica se duas áreas estão colidindo
+function isColliding(box1, box2) {
+    return (
+        box1.x < box2.x + box2.width &&
+        box1.x + box1.width > box2.x &&
+        box1.y < box2.y + box2.height &&
+        box1.y + box1.height > box2.y
+    );
+}
+
+// Resolver colisão e permitir que os jogadores empurrem um ao outro
+async function resolveCollision() {
     const hitbox1 = getHitbox(player1);
     const hitbox2 = getHitbox(player2);
 
@@ -177,32 +242,36 @@ function resolveCollision() {
         player2.y + player2.height - player1.y
     );
 
+    const collisionCount1 = countCollidingHitboxes(hitbox1, hitbox2);
+    const collisionCount2 = countCollidingHitboxes(hitbox2, hitbox1);
+
     if (overlapX < overlapY) {
         if (player1.x < player2.x) {
             player1.x -= overlapX / 2;
             player2.x += overlapX / 2;
-            player1.rotation = hitbox1.right ? 10 : player1.rotation;
-            player2.rotation = hitbox2.left ? -10 : player2.rotation;
+            if (collisionCount1 === 1) await rotatePlayer(player1, player1.rotation + 2);
+            if (collisionCount2 === 1) await rotatePlayer(player2, player2.rotation + 2);
         } else {
             player1.x += overlapX / 2;
             player2.x -= overlapX / 2;
-            player1.rotation = hitbox1.left ? -10 : player1.rotation;
-            player2.rotation = hitbox2.right ? 10 : player2.rotation;
+            if (collisionCount1 === 1) await rotatePlayer(player1, player1.rotation + 2);
+            if (collisionCount2 === 1) await rotatePlayer(player2, player2.rotation + 2);
         }
     } else {
         if (player1.y < player2.y) {
             player1.y -= overlapY / 2;
             player2.y += overlapY / 2;
-            player1.rotation = hitbox1.front ? -5 : player1.rotation;
-            player2.rotation = hitbox2.back ? 5 : player2.rotation;
+            if (collisionCount1 === 1) await rotatePlayer(player1, player1.rotation - 1);
+            if (collisionCount2 === 1) await rotatePlayer(player2, player2.rotation + 1);
         } else {
             player1.y += overlapY / 2;
             player2.y -= overlapY / 2;
-            player1.rotation = hitbox1.back ? 5 : player1.rotation;
-            player2.rotation = hitbox2.front ? -5 : player2.rotation;
+            if (collisionCount1 === 1) await rotatePlayer(player1, player1.rotation + 1);
+            if (collisionCount2 === 1) await rotatePlayer(player2, player2.rotation - 1);
         }
     }
 }
+
 
 // Função de movimentação com suporte a Promises
 function slide(player, distance) {
