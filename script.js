@@ -367,29 +367,85 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-document.getElementById('helpButton').addEventListener('click', function() {
+document.getElementById('helpButton').addEventListener('click', function () {
+    // Verificar se a janela já está aberta
+    if (document.querySelector('.blank-window')) return;
+
     // Criar a janela amigável
     var blankWindow = document.createElement('div');
     blankWindow.className = 'blank-window';
-    
-    // Conteúdo da janela amigável
-    var content = document.createElement('div');
-    content.className = 'blank-window-content';
-    content.innerHTML = `
-        <h2>Bem-vindo ao simulador de Sumo Lego!</h2>
-        <p>O Sumo LEGO é uma competição entre robôs programados para empurrar o adversário para fora de uma arena, semelhante ao sumô tradicional. No seu simulador, a programação em blocos permite criar lógicas sem precisar escrever código, usando uma interface gráfica intuitiva. Com essa abordagem, os jogadores podem definir o comportamento dos robôs, ajustando os motores e elaborando estratégias para vencer as batalhas.</p>
-    `;
-    blankWindow.appendChild(content);
-    
-    // Botão de fechar
+
+    // Criar o container deslizante
+    var slider = document.createElement('div');
+    slider.className = 'blank-window-slider';
+
+    // Conteúdos da janela em páginas separadas
+    var pages = [
+        `<h2>Bem-vindo ao simulador de Sumo LEGO!</h2>
+         <p>O Sumo LEGO é uma competição entre robôs programados para empurrar o adversário para fora da arena.</p>`,
+
+        `<h2>Como funciona?</h2>
+         <p>No seu simulador, a programação em blocos permite criar lógicas sem precisar escrever código,basta apenas arrastar e soltar os blocos para criar o seu programa.</p>`,
+
+        `<h2>Dicas para vencer</h2>
+         <p>Ajuste os motores, configure sensores e desenvolva estratégias para derrotar seus oponentes na arena!</p>`,
+        
+        `<h2>Área de Programação</h2>
+        <p> Arraste os blocos de comando para criar seu programa e execute-o na arena clicando no botão "Executar". Para remover blocos indesejados, basta clicar rapidamente sobre eles ou usar o botão "Limpar".</p>`,
+
+        `<h2>Resetando Posições</h2>
+        <p>Você pode retornar os robôs à posição inicial clicando no botão "Reset", localizado à esquerda do dojo.</p>`,
+
+
+    ];
+
+    pages.forEach(content => {
+        var page = document.createElement('div');
+        page.className = 'blank-window-content';
+        page.innerHTML = content;
+        slider.appendChild(page);
+    });
+
+    blankWindow.appendChild(slider);
+
+    // Botões de navegação
+    var prevBtn = document.createElement('button');
+    prevBtn.className = 'prev-btn';
+    prevBtn.innerHTML = '◀';
+
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'next-btn';
+    nextBtn.innerHTML = '▶';
+
+    // Adicionar evento de deslizar
+    let index = 0;
+    nextBtn.addEventListener('click', () => {
+        if (index < pages.length - 1) {
+            index++;
+            slider.style.transform = `translateX(-${index * 100}%)`;
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (index > 0) {
+            index--;
+            slider.style.transform = `translateX(-${index * 100}%)`;
+        }
+    });
+
+    blankWindow.appendChild(prevBtn);
+    blankWindow.appendChild(nextBtn);
+
+    // Botão de fechar com novo estilo
     var closeButton = document.createElement('div');
     closeButton.className = 'close-button';
     closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', function() {
+    closeButton.addEventListener('click', function () {
         document.body.removeChild(blankWindow);
     });
+
     blankWindow.appendChild(closeButton);
-    
-    // Adicionar a janela amigável ao body
+
+    // Adicionar a janela ao body
     document.body.appendChild(blankWindow);
 });

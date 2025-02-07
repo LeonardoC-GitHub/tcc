@@ -288,43 +288,121 @@ width: 100%;
     fill: white; /* Cor do ícone dentro do botão */
 }
 /* Estilos para a janela amigável */
+
+/* Estilos para a janela amigável */
 .blank-window {
-    width: 400px;
+    width: 600px;
+    max-width: 90%;
+    height: 380px;
+    max-height: 90vh;
     background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    padding: 25px;
+    font-family: 'Arial', sans-serif;
     font-size: 16px;
-    line-height: 1.6;
     text-align: center;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     overflow: hidden;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Estilos para o conteúdo dentro da janela */
+/* Efeito de entrada suave */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Container deslizante */
+.blank-window-slider {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s ease-in-out;
+}
+
+/* Cada conteúdo da janela */
 .blank-window-content {
-    margin-bottom: 20px;
+    min-width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Estilos para o botão de fechar */
+/* Botão de fechar */
 .close-button {
     cursor: pointer;
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 24px;
-    height: 24px;
-    padding: 6px;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    background-color: #f0f0f0;
+    font-size: 22px;
+    font-weight: bold;
     transition: background-color 0.3s ease;
 }
 
 .close-button:hover {
-    background-color: #e0e0e0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.prev-btn, .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent; /* Remove o fundo */
+    border: none; /* Remove a borda */
+    padding: 8px;  
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ajuste para a posição */
+.prev-btn { left: 10px; }
+.next-btn { right: 10px; }
+
+/* Efeito ao passar o mouse */
+.prev-btn:hover, .next-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Ajuste para o ícone SVG dentro dos botões */
+.prev-btn svg, .next-btn svg {
+    width: 18px; /* Define um tamanho menor para a seta */
+    height: 18px;
+    stroke-width: 2.5; /* Mantém a seta visível */
+    stroke: black; /* Cor da seta */
+    transition: stroke 0.3s ease;
+}
+
+/* Muda a cor da seta ao passar o mouse */
+.prev-btn:hover svg, .next-btn:hover svg {
+    stroke: rgba(0, 0, 0, 0.6); /* Cor um pouco mais clara */
 }
