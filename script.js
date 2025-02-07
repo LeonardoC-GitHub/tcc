@@ -366,3 +366,30 @@ document.addEventListener("DOMContentLoaded", () => {
         resetGame();
     });
 });
+
+document.getElementById('helpButton').addEventListener('click', function() {
+    // Criar a janela amigável
+    var blankWindow = document.createElement('div');
+    blankWindow.className = 'blank-window';
+    
+    // Conteúdo da janela amigável
+    var content = document.createElement('div');
+    content.className = 'blank-window-content';
+    content.innerHTML = `
+        <h2>Bem-vindo ao simulador de Sumo Lego!</h2>
+        <p>O Sumo LEGO é uma competição entre robôs programados para empurrar o adversário para fora de uma arena, semelhante ao sumô tradicional. No seu simulador, a programação em blocos permite criar lógicas sem precisar escrever código, usando uma interface gráfica intuitiva. Com essa abordagem, os jogadores podem definir o comportamento dos robôs, ajustando os motores e elaborando estratégias para vencer as batalhas.</p>
+    `;
+    blankWindow.appendChild(content);
+    
+    // Botão de fechar
+    var closeButton = document.createElement('div');
+    closeButton.className = 'close-button';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', function() {
+        document.body.removeChild(blankWindow);
+    });
+    blankWindow.appendChild(closeButton);
+    
+    // Adicionar a janela amigável ao body
+    document.body.appendChild(blankWindow);
+});
