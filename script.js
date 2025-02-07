@@ -115,12 +115,13 @@ function declareWinner(winner) {
   modal.style.display = "flex"; // Exibe o modal
 
   // Opção de reiniciar o jogo (caso queira adicionar a lógica)
-  resetGame();
+
 }
 
 function closeModal() {
   const modal = document.getElementById("winnerModal");
   modal.style.display = "none"; // Fecha o modal
+  resetGame();
 }
 
 function resetGame() {
@@ -312,6 +313,17 @@ async function resolveCollision() {
 
 // Função de movimentação com suporte a Promises
 function slide(player, distance) {
+    if (!isInsideCircle(player1)) {
+        declareWinner(2);
+        isExecuting = false;
+        return;
+      }
+  
+      if (!isInsideCircle(player2)) {
+        declareWinner(1);
+        isExecuting = false;
+        return;
+      }
   return new Promise((resolve) => {
     const steps = 60;
     const stepX =
