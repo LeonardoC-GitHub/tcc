@@ -109,7 +109,7 @@ function declareWinner(winner) {
   const winnerText = document.getElementById("winnerText");
 
   // Exibe o vencedor com base no parâmetro 'winner'
-  winnerText.textContent = `Player ${winner} wins!`;
+  winnerText.textContent = `Jogador ${winner} Ganhou!`;
 
   const modal = document.getElementById("winnerModal");
   modal.style.display = "flex"; // Exibe o modal
