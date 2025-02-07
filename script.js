@@ -155,6 +155,19 @@ function arePlayersColliding() {
 
 // Handle collision resolution and allow players to push each other
 function resolveCollision() {
+    // Definição das zonas de colisão de cada player
+    function getHitbox(player) {
+        return {
+            front: { x: player.x + player.width / 4, y: player.y, width: player.width / 2, height: player.height / 4 },
+            back: { x: player.x + player.width / 4, y: player.y + (3 * player.height) / 4, width: player.width / 2, height: player.height / 4 },
+            left: { x: player.x, y: player.y + player.height / 4, width: player.width / 4, height: player.height / 2 },
+            right: { x: player.x + (3 * player.width) / 4, y: player.y + player.height / 4, width: player.width / 4, height: player.height / 2 }
+        };
+    }
+
+    const hitbox1 = getHitbox(player1);
+    const hitbox2 = getHitbox(player2);
+
     const overlapX = Math.min(
         player1.x + player1.width - player2.x,
         player2.x + player2.width - player1.x
@@ -168,17 +181,25 @@ function resolveCollision() {
         if (player1.x < player2.x) {
             player1.x -= overlapX / 2;
             player2.x += overlapX / 2;
+            player1.rotation = hitbox1.right ? 10 : player1.rotation;
+            player2.rotation = hitbox2.left ? -10 : player2.rotation;
         } else {
             player1.x += overlapX / 2;
             player2.x -= overlapX / 2;
+            player1.rotation = hitbox1.left ? -10 : player1.rotation;
+            player2.rotation = hitbox2.right ? 10 : player2.rotation;
         }
     } else {
         if (player1.y < player2.y) {
             player1.y -= overlapY / 2;
             player2.y += overlapY / 2;
+            player1.rotation = hitbox1.front ? -5 : player1.rotation;
+            player2.rotation = hitbox2.back ? 5 : player2.rotation;
         } else {
             player1.y += overlapY / 2;
             player2.y -= overlapY / 2;
+            player1.rotation = hitbox1.back ? 5 : player1.rotation;
+            player2.rotation = hitbox2.front ? -5 : player2.rotation;
         }
     }
 }
