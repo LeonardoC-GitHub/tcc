@@ -550,19 +550,24 @@ document.getElementById("helpButton").addEventListener("click", function () {
 
   // Conteúdos da janela em páginas separadas
   var pages = [
-    `<h2>Bem-vindo ao simulador de Sumo LEGO!</h2>
+    `<img src="bloco_lego.png" alt="Sumô LEGO" width="90">
+    <h2>Bem-vindo ao simulador de Sumo LEGO!</h2>
          <p>O Sumo LEGO é uma competição entre robôs programados para empurrar o adversário para fora da arena.</p>`,
 
-    `<h2>Como funciona?</h2>
+    `<img src="engrenagem.png" alt="Sumô LEGO" width="90">
+    <h2>Como funciona?</h2>
          <p>No seu simulador, a programação em blocos permite criar lógicas sem precisar escrever código,basta apenas arrastar e soltar os blocos para criar o seu programa.</p>`,
 
-    `<h2>Dicas para vencer</h2>
+    `<img src="trofeu1.png" alt="Sumô LEGO" width="90">
+    <h2>Dicas para vencer</h2>
          <p>Ajuste os motores, configure sensores e desenvolva estratégias para derrotar seus oponentes na arena!</p>`,
 
-    `<h2>Área de Programação</h2>
+    `<img src="programacaoIcon.png" alt="Sumô LEGO" width="90">
+    <h2>Área de Programação</h2>
         <p> Arraste os blocos de comando para criar seu programa e execute-o na arena clicando no botão "Executar". Para remover blocos indesejados, basta clicar rapidamente sobre eles ou usar o botão "Limpar".</p>`,
-
-    `<h2>Resetando Posições</h2>
+        
+    `<img src="recarregar.png" alt="Sumô LEGO" width="90">
+    <h2>Resetando Posições</h2>
         <p>Você pode retornar os robôs à posição inicial clicando no botão "Reset", localizado à esquerda do dojo.</p>`,
   ];
 
