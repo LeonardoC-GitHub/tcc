@@ -568,11 +568,11 @@ document.getElementById("helpButton").addEventListener("click", function () {
 
     `<img src="engrenagem.png" alt="Sumô LEGO" width="90">
     <h2>Como funciona?</h2>
-         <p>No seu simulador, a programação em blocos permite criar lógicas sem precisar escrever código,basta apenas arrastar e soltar os blocos para criar o seu programa.</p>`,
+         <p>No simulador,use a programação em blocos permite criar lógicas sem precisar escrever código,basta apenas arrastar e soltar os blocos para criar o seu programa.</p>`,
 
     `<img src="trofeu1.png" alt="Sumô LEGO" width="90">
     <h2>Dicas para vencer</h2>
-         <p>Ajuste os motores, configure sensores e desenvolva estratégias para derrotar seus oponentes na arena!</p>`,
+         <p>Ajuste os motores, configure sensores e desenvolva estratégias para empurrar seus oponentes da arena!</p>`,
 
     `<img src="programacaoIcon.png" alt="Sumô LEGO" width="90">
     <h2>Área de Programação</h2>
