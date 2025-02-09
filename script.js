@@ -248,7 +248,6 @@ function isColliding(box1, box2) {
   );
 }
 
-// Resolver colisão e permitir que os jogadores empurrem um ao outro
 async function resolveCollision() {
   // Verifica se os jogadores ainda estão dentro do círculo antes de iniciar o movimento
   if (!isInsideCircle(player1)) {
@@ -276,37 +275,34 @@ async function resolveCollision() {
   const collisionCount1 = countCollidingHitboxes(hitbox1, hitbox2);
   const collisionCount2 = countCollidingHitboxes(hitbox2, hitbox1);
 
+  // Condição para colisão horizontal (empurrar sem rotação)
   if (overlapX < overlapY) {
     if (player1.x < player2.x) {
       player1.x -= overlapX / 2;
       player2.x += overlapX / 2;
-      if (collisionCount1 === 1)
-        await rotatePlayer(player1, player1.rotation + 2);
-      if (collisionCount2 === 1)
-        await rotatePlayer(player2, player2.rotation + 2);
     } else {
       player1.x += overlapX / 2;
       player2.x -= overlapX / 2;
-      if (collisionCount1 === 1)
-        await rotatePlayer(player1, player1.rotation + 2);
-      if (collisionCount2 === 1)
-        await rotatePlayer(player2, player2.rotation + 2);
     }
   } else {
+    // Condição para colisão vertical (empurrar sem rotação)
     if (player1.y < player2.y) {
       player1.y -= overlapY / 2;
       player2.y += overlapY / 2;
-      if (collisionCount1 === 1)
-        await rotatePlayer(player1, player1.rotation - 1);
-      if (collisionCount2 === 1)
-        await rotatePlayer(player2, player2.rotation + 1);
     } else {
       player1.y += overlapY / 2;
       player2.y -= overlapY / 2;
-      if (collisionCount1 === 1)
-        await rotatePlayer(player1, player1.rotation + 1);
-      if (collisionCount2 === 1)
-        await rotatePlayer(player2, player2.rotation - 1);
+    }
+  }
+
+  // Verifica se a rotação dos dois robôs é a mesma
+  if (player1.rotation !== player2.rotation) {
+    // Aplica rotação apenas se as rotações não forem as mesmas
+    if (collisionCount1 === 1) {
+      await rotatePlayer(player1, player1.rotation + 2);
+    }
+    if (collisionCount2 === 1) {
+      await rotatePlayer(player2, player2.rotation + 2);
     }
   }
 }
