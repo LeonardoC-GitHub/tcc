@@ -309,23 +309,22 @@ async function resolveCollision() {
 
 // Função de movimentação com suporte a Promises
 function slide(player, distance) {
-    if (!isInsideCircle(player1)) {
-        declareWinner(2);
-        isExecuting = false;
-        return;
-      }
-  
-      if (!isInsideCircle(player2)) {
-        declareWinner(1);
-        isExecuting = false;
-        return;
-      }
+  if (!isInsideCircle(player1)) {
+    declareWinner(2);
+    isExecuting = false;
+    return;
+  }
+
+  if (!isInsideCircle(player2)) {
+    declareWinner(1);
+    isExecuting = false;
+    return;
+  }
+
   return new Promise((resolve) => {
     const steps = 60;
-    const stepX =
-      ((distance + 20) * Math.cos((Math.PI / 180) * player.rotation)) / steps;
-    const stepY =
-      ((distance + 20) * Math.sin((Math.PI / 180) * player.rotation)) / steps;
+    const stepX = ((distance + 20) * Math.cos((Math.PI / 180) * player.rotation)) / steps;
+    const stepY = ((distance + 20) * Math.sin((Math.PI / 180) * player.rotation)) / steps;
     let currentStep = 0;
 
     function step() {
@@ -333,6 +332,7 @@ function slide(player, distance) {
         resolve(); // Movimento concluído
         return;
       }
+
       // Verifica se os jogadores ainda estão dentro do círculo antes de iniciar o movimento
       if (!isInsideCircle(player1)) {
         declareWinner(2);
@@ -360,20 +360,8 @@ function slide(player, distance) {
       requestAnimationFrame(step);
     }
 
-    // Verifica se os jogadores ainda estão dentro do círculo antes de iniciar o movimento
-    if (!isInsideCircle(player1)) {
-      declareWinner(2);
-      isExecuting = false;
-      return;
-    }
-
-    if (!isInsideCircle(player2)) {
-      declareWinner(1);
-      isExecuting = false;
-      return;
-    }
-
-    step(); // Inicia o movimento
+    // Inicia o movimento
+    step();
   });
 }
 
@@ -399,8 +387,15 @@ async function executeCommands() {
 
   const command = commandsQueue.shift();
 
-  if (command === "up" || command === "down") {
-    const distance = command === "up" ? player1.speed : -player1.speed;
+  // Distâncias predefinidas
+  const shortDistance = 20;  // Distância curta
+  const longDistance = 60;   // Distância longa
+
+  if (command === "up_short" || command === "down_short") {
+    const distance = command === "up_short" ? shortDistance : -shortDistance;
+    await slide(player1, distance); // Aguarda a movimentação
+  } else if (command === "up_long" || command === "down_long") {
+    const distance = command === "up_long" ? longDistance : -longDistance;
     await slide(player1, distance); // Aguarda a movimentação
   } else if (command.startsWith("rotate")) {
     const rotationSteps = {
@@ -412,11 +407,7 @@ async function executeCommands() {
       rotate90right: 90,
     };
     const targetRotation = player1.rotation + rotationSteps[command];
-    await animateRotation(
-      player1,
-      targetRotation,
-      Math.sign(rotationSteps[command])
-    ); // Aguarda a rotação
+    await animateRotation(player1, targetRotation, Math.sign(rotationSteps[command])); // Aguarda a rotação
   }
 
   // Verifica novamente se os jogadores estão dentro do círculo
@@ -435,7 +426,6 @@ async function executeCommands() {
   // Continua com o próximo comando
   executeCommands();
 }
-
 // Função de animação de rotação
 function animateRotation(player, targetRotation, rotationStep) {
   return new Promise((resolve) => {
