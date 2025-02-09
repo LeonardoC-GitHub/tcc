@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Poppins", serif;
     text-align: center;
     margin: 0;
     padding: 0;
@@ -19,7 +19,7 @@ body::before {
     height: 100%;
     background: url('fundoGame.png') no-repeat center center;
     background-size: cover;
-    opacity: 0.95; /* Ajuste a opacidade aqui (0.1 a 1) */
+    opacity: 0.8; /* Ajuste a opacidade aqui (0.1 a 1) */
     z-index: -1; /* Coloca a camada atrás do conteúdo do body */
 }
 canvas {
@@ -36,14 +36,16 @@ canvas {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 20px;
-    width: 30%; /* Define uma largura fixa */
-    height: 100vh; /* Ocupa toda a altura da tela */
+    width: 40%; /* Define uma largura fixa */
+    height: 90vh; /* Ocupa toda a altura da tela */
     text-align: left;
     overflow-y: auto; /* Adiciona scroll vertical se o conteúdo ultrapassar o tamanho */
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
+    margin-left: 2%;
+    margin-top: 2vh;
 }
 .blocks{
 
@@ -77,11 +79,15 @@ width: 100%;
     cursor: grab;
     user-select: none; /* Evita seleção de texto acidental */
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.425);
 
     /* Define largura responsiva */
     flex: 0 1 calc(33.33% - 2%); /* 3 blocos por linha com gap */
     margin-bottom: 4%;
+    
+}
+.block::houver {
+    scale: 1%;
     
 }
 
@@ -115,13 +121,17 @@ width: 100%;
     margin: 10px;
     font-size: 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 1.5vh;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: transform 0.4s;
+    box-shadow: 0 4px 11px rgba(0, 0, 0, 0.514);
+    font-family: "Poppins", serif;
 }
 
 .actions button:hover {
-    background-color: #ddd;
+    opacity: 0.8;
+    transform: scale(1.08);
+
 }
 
 .run {
@@ -145,8 +155,8 @@ width: 100%;
 
 /* Estilos para o botão de reset */
 .reset-button {
-    width: 40px;
-    height: 40px;
+    width: 8vh;
+    height: 8vh;
     border-radius: 50%;
     background-color: #333;
     display: flex;
@@ -159,10 +169,11 @@ width: 100%;
     color: white;
     position: relative; /* Necessário para o posicionamento do pseudo-elemento */
     transition: transform 0.2s;
+    box-shadow: 0 7px 11px rgba(0, 0, 0, 0.616);
 }
 
 .reset-button:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
 .reset-button:active {
@@ -267,21 +278,23 @@ width: 100%;
     position: fixed;
     bottom: 20px;  /* Distância do botão do fundo da tela */
     right: 20px;   /* Distância do botão da direita da tela */
-    width: 30px;   /* Largura do botão */
-    height: 30px;  /* Altura do botão */
+    width: 8vh;   /* Largura do botão */
+    height: 8vh;  /* Altura do botão */
     border-radius: 50%;  /* Tornar o botão circular */
-    background-color: #000; /* Cor de fundo do botão */
+    background-color: #000000; /* Cor de fundo do botão */
     display: flex;
     justify-content: center;
     align-items: center;
     border: none;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 6px 15px rgb(255, 255, 255);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: transform 0.4s;
+    
 }
 
 .help-button:hover {
-    background-color: #f80202;  /* Cor do botão ao passar o mouse */
+    background-color: #000000; 
+    transform: scale(1.1);
 }
 
 .help-button svg {
@@ -297,7 +310,7 @@ width: 100%;
     max-height: 90vh;
     background-color: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.459);
     padding: 25px;
     font-family: 'Arial', sans-serif;
     font-size: 16px;
@@ -313,6 +326,8 @@ width: 100%;
     justify-content: space-between;
     overflow: hidden;
     animation: fadeIn 0.3s ease-in-out;
+    font-family: "Poppins", serif;
+    
 }
 
 /* Efeito de entrada suave */
@@ -344,6 +359,7 @@ width: 100%;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    
 }
 
 /* Botão de fechar */
